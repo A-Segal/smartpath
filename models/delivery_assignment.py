@@ -1,0 +1,10 @@
+from sqlalchemy import Column, Integer, ForeignKey
+from .base import Base
+
+class DeliveryAssignment(Base):
+    __tablename__ = 'DeliveryAssignment'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    distribution_center_id = Column(Integer, ForeignKey('DistributionCenter.id'), nullable=False)
+    recipient_id = Column(Integer, ForeignKey('Recipient.id'), nullable=False)
+    volunteer_id = Column(Integer, ForeignKey('Volunteer.id'), nullable=False)
+    amount_of_meals = Column(Integer)
