@@ -58,7 +58,7 @@ def update_amount_of_meals(username, new_amount):
 
 # דוגמאות לשימוש
 create_recipient(
-    "shani", "dan", "sd", "1133sd", "sd@gmail.com", "0546789876",
-    32.0853, 34.7818, 5, datetime(2026, 5, 11, 14, 30)
+    "dan", "ron", "dr", "124dr", "dr@gmail.com", "0246789876",
+    33.0853, 31.7818, 6, datetime(2026, 5, 11, 14, 30)
 )
 update_amount_of_meals("shani", 20)
