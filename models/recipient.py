@@ -13,4 +13,4 @@ class Recipient(Base):
     location_lat = Column(DECIMAL(9,6))
     location_lng = Column(DECIMAL(9,6))
     amount_of_meals = Column(Integer)
-    date = Column(DateTime)
+    delivery_date = Column(DateTime)
