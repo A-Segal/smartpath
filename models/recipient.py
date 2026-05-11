@@ -1,9 +1,8 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, DECIMAL, DateTime
 from .base import Base
 
-class Volunteer(Base):
-    __tablename__ = 'Volunteer'
+class Recipient(Base):
+    __tablename__ = 'Recipient'
     id = Column(Integer, primary_key=True, autoincrement=True)
     fname = Column(String(50), nullable=False)
     lname = Column(String(50), nullable=False)
@@ -11,3 +10,7 @@ class Volunteer(Base):
     password = Column(String(100), nullable=False)
     mail = Column(String(100))
     phone = Column(String(20))
+    location_lat = Column(DECIMAL(9,6))
+    location_lng = Column(DECIMAL(9,6))
+    amount_of_meals = Column(Integer)
+    date = Column(DateTime)
