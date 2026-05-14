@@ -12,8 +12,7 @@ class Recipient(Base):
     phone = Column(String(20))
     location_lat = Column(DECIMAL(9,6))
     location_lng = Column(DECIMAL(9,6))
-    amount_of_meals = Column(Integer)
-    delivery_date = Column(DateTime)
+
 
 
 

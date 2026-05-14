@@ -1,0 +1,11 @@
+
+from sqlalchemy import Column, Integer, ForeignKey, DateTime
+from .base import Base
+
+class DS_Request(Base):
+    __tablename__ = 'DS_Request'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    DistributionCenterID = Column(Integer, ForeignKey('DistributionCenter.id'), nullable=False)
+    amount_of_meals = Column(Integer, nullable=False)
+    request_date = Column(DateTime, nullable=False)

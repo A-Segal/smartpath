@@ -15,8 +15,7 @@ class RecipientRepository:
         phone: str = None,
         location_lat: float = None,
         location_lng: float = None,
-        amount_of_meals: int = None,
-        delivery_date = None
+
     ) -> Recipient:
         recipient = Recipient(
             fname=fname,
@@ -27,8 +26,6 @@ class RecipientRepository:
             phone=phone,
             location_lat=location_lat,
             location_lng=location_lng,
-            amount_of_meals=amount_of_meals,
-            delivery_date=delivery_date
         )
         self.db.add(recipient)
         self.db.commit()
@@ -52,8 +49,6 @@ class RecipientRepository:
         phone: str = None,
         location_lat: float = None,
         location_lng: float = None,
-        amount_of_meals: int = None,
-        delivery_date = None
     ) -> Recipient | None:
         recipient = self.get_recipient(recipientID)
         if recipient:
@@ -65,8 +60,6 @@ class RecipientRepository:
             if phone is not None: recipient.phone = phone
             if location_lat is not None: recipient.location_lat = location_lat
             if location_lng is not None: recipient.location_lng = location_lng
-            if amount_of_meals is not None: recipient.amount_of_meals = amount_of_meals
-            if delivery_date is not None: recipient.delivery_date = delivery_date
             self.db.commit()
             self.db.refresh(recipient)
         return recipient
