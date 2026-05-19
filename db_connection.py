@@ -1,6 +1,3 @@
-
-
-
 from models.base import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -28,7 +25,5 @@ Base.metadata.create_all(bind=engine)
 SessionLocal = sessionmaker(bind=engine)
 
 
-
-
-
-
+def get_session():
+    return SessionLocal()

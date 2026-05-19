@@ -1,4 +1,3 @@
-#DTO
 from flask import Blueprint, request, jsonify
 from repository.DS_request_Repository import DSRequestRepository
 from db_connection import SessionLocal

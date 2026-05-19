@@ -5,6 +5,7 @@ from math import radians, cos, sin, sqrt, atan2
 # הכנס את המפתח שלך כאן
 API_KEY = "YOUR_GOOGLE_API_KEY_HERE"
 
+
 # =========================
 # פונקציה 1: כתובת -> lat,lng
 # =========================
@@ -23,6 +24,7 @@ def geocode_address(address: str):
     location = data['results'][0]['geometry']['location']
     return {"lat": location['lat'], "lng": location['lng']}
 
+
 # =========================
 # פונקציה 2: מרחק בין שתי נקודות (Haversine)
 # =========================
@@ -33,10 +35,11 @@ def distance_between_points(lat1, lng1, lat2, lng2):
     R = 6371  # רדיוס כדור הארץ בק"מ
     dlat = radians(lat2 - lat1)
     dlng = radians(lng2 - lng1)
-    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlng/2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlng / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = R * c
     return distance
+
 
 # =========================
 # פונקציה 3: זמן נסיעה בין שתי נקודות (Google Distance Matrix)
@@ -60,8 +63,9 @@ def travel_time_between_points(lat1, lng1, lat2, lng2, mode="driving"):
         return {"error": "נתיב לא נמצא"}
 
     distance_km = element['distance']['value'] / 1000  # מטר -> ק"מ
-    duration_min = element['duration']['value'] / 60   # שניות -> דקות
+    duration_min = element['duration']['value'] / 60  # שניות -> דקות
     return {"distance_km": distance_km, "duration_min": duration_min}
+
 
 # =========================
 # פונקציה 4: קבלת אזור/יישוב/מחוז

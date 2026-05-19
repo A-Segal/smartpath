@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, jsonify
 from repository.delivery_assignmentRepository import DeliveryAssignmentRepository
 from db_connection import SessionLocal
@@ -7,6 +6,7 @@ from typing import List
 
 # Blueprint עבור DeliveryAssignment
 delivery_assignment_bp = Blueprint('delivery_assignment_bp', __name__, url_prefix='/delivery_assignment')
+
 
 # ==================== יצירת משלוח חדש (POST) ====================
 @delivery_assignment_bp.route('', methods=['POST'])
@@ -35,6 +35,7 @@ def add_delivery_assignment():
     finally:
         db_session.close()
 
+
 # ==================== קבלת משלוח לפי ID (GET) ====================
 @delivery_assignment_bp.route('/<int:assignment_id>', methods=['GET'])
 def get_delivery_assignment(assignment_id):
@@ -57,6 +58,7 @@ def get_delivery_assignment(assignment_id):
     finally:
         db_session.close()
 
+
 # ==================== קבלת כל המשלוחים (GET all) ====================
 @delivery_assignment_bp.route('', methods=['GET'])
 def get_all_delivery_assignments():
@@ -78,6 +80,7 @@ def get_all_delivery_assignments():
         return jsonify(all_dto)
     finally:
         db_session.close()
+
 
 # ==================== עדכון משלוח (PUT) ====================
 @delivery_assignment_bp.route('/<int:assignment_id>', methods=['PUT'])
@@ -109,6 +112,7 @@ def update_delivery_assignment(assignment_id):
         return jsonify(dto.__dict__)
     finally:
         db_session.close()
+
 
 # ==================== מחיקת משלוח (DELETE) ====================
 @delivery_assignment_bp.route('/<int:assignment_id>', methods=['DELETE'])

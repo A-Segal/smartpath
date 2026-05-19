@@ -1,4 +1,4 @@
-#DTO
+
 
 from flask import Blueprint, request, jsonify
 from repository.VehicleRepository import VehicleRepository
