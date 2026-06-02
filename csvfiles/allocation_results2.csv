@@ -1,0 +1,4 @@
+center_id,recipient_id,base_demand,center_capacity,distance_km,allocation_score
+6,8,0,0,0.0,1000.0
+10,7,0,0,7.398476846210718,992.6015231537892
+6,9,0,0,0.0,1000.0

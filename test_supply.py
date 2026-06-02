@@ -1,100 +1,80 @@
-import numpy as np
+import csv
+from services.batch_algoritm.try_tranportation_algoritm import run_transportation_problem
 
-from db_connection import get_session
-from services.batch_algoritm.options_of_Inlay_filter_by_meals import dict_of_valid_divide_options
+# ------------------------
+# CONFIG
+# ------------------------
+CSV_OUTPUT_FOLDER = "csvfiles"
+CSV_FILENAME = "allocation_results.csv"
 
-# =========================
-# Connect to DB
-# =========================
-db = get_session()
+# ------------------------
+# TEST FUNCTION
+# ------------------------
+def test_transportation_algorithm(db):
+    """
+    Test the transportation algorithm:
+    - Run the algorithm
+    - Print the results
+    - Save CSV with recipient, center, amount assigned, demand, center capacity, distance
+    """
 
-# =========================
-# Fetch all valid options
-# =========================
-results = dict_of_valid_divide_options(db)
+    # --- Run the algorithm ---
+    result = run_transportation_problem(db)
 
-# =========================
-# Build Supply array
-# =========================
-supply = np.array([
-    next(
-        r["capacity"]
-        for r in results
-        if r["center_id"] == center_id
-    )
-    for center_id in sorted({r["center_id"] for r in results})
-])
+    # --- Check if there is a solution ---
+    if result["status"] != "Optimal":
+        print(f"Solver status: {result['status']}")
+        return
 
-# =========================
-# Print Supply
-# =========================
-centers = sorted({r["center_id"] for r in results})
-print("SUPPLY ARRAY")
-print("=" * 70)
-for i, center_id in enumerate(centers):
-    print(f"Center {center_id:<2}: {supply[i]}")
-print("\n")
+    allocation = result["allocation"]
 
-# =========================
-# Build Demand array
-# =========================
-demand = np.array([
-    sum(r["demand"] for r in results if r["recipient_id"] == recipient_id)
-    for recipient_id in sorted({r["recipient_id"] for r in results})
-])
+    if not allocation:
+        print("No allocation returned")
+        return
 
-# =========================
-# Print Demand
-# =========================
-recipients = sorted({r["recipient_id"] for r in results})
-print("DEMAND ARRAY")
-print("=" * 70)
-for i, recipient_id in enumerate(recipients):
-    print(f"Recipient {recipient_id:<2}: {demand[i]}")
-print("\n")
-
-# =========================
-# Build Costs / Distance matrix
-# =========================
-costs = np.array([
-    [
-        next(
-            (
-                r["distance_km"]
-                for r in results
-                if r["center_id"] == center_id
-                and r["recipient_id"] == recipient_id
-            ),
-            np.inf
+    # --- Print allocation ---
+    print("Allocation results:")
+    for a in allocation:
+        print(
+            f"Recipient {a['recipient_id']} <- Center {a['center_id']}, "
+            f"Amount: {a['amount']}, Recipient Demand: {a['recipient_demand']}, "
+            f"Center Capacity: {a['center_capacity']}, Distance: {a['distance']:.2f} km"
         )
-        for recipient_id in recipients
-    ]
-    for center_id in centers
-])
 
-# =========================
-# Print Costs matrix nicely
-# =========================
-print("COSTS MATRIX")
-print("=" * 70)
+    # --- Save CSV ---
+    csv_path = f"{CSV_OUTPUT_FOLDER}/{CSV_FILENAME}"
+    with open(csv_path, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "recipient_id",
+                "center_id",
+                "amount",
+                "recipient_demand",
+                "center_capacity",
+                "distance"
+            ]
+        )
+        writer.writeheader()
+        for a in allocation:
+            writer.writerow({
+                "recipient_id": a["recipient_id"],
+                "center_id": a["center_id"],
+                "amount": a["amount"],
+                "recipient_demand": a["recipient_demand"],
+                "center_capacity": a["center_capacity"],
+                "distance": a["distance"]
+            })
 
-# Header
-header = " " * 10 + "".join([f"{'Recipient '+str(r):>15}" for r in recipients])
-print(header)
-print("-" * len(header))
-
-# Rows
-for i, center_id in enumerate(centers):
-    row_values = "".join(f"{costs[i][j]:>15.2f}" for j in range(len(recipients)))
-    print(f"{'Center '+str(center_id):<10}{row_values}")
-
-print("\n")
+    print(f"\nCSV saved to: {csv_path}")
+    print(f"Total assigned recipients: {len(allocation)}")
+    print(f"Unassigned recipients: {len(result.get('unassigned', []))}")
 
 
-# 2. שטיחת מטריצת העלויות למערך חד-ממדי עבור האלגוריתם
-c = costs.flatten()
-
-print("COSTS ARRAY (flattened)")
-print("=" * 70)
-print(c)
-print("\n")
+# ------------------------
+# RUN TEST
+# ------------------------
+if __name__ == "__main__":
+    from db_connection import get_session  # פונקציה שמחזירה session SQLAlchemy
+    db = get_session()
+    test_transportation_algorithm(db)
