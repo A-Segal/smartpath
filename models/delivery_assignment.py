@@ -8,5 +8,4 @@ class DeliveryAssignment(Base):
     RecipientID = Column(Integer, ForeignKey('Recipient.id'), nullable=False)
     VolunteerID = Column(Integer, ForeignKey('Volunteer.id'), nullable=False)
     amount_of_meals = Column(Integer)
-
-
+    freshness_priority = Column(Integer, nullable=False)

@@ -10,13 +10,15 @@ class DeliveryAssignmentRepository:
         DistributionCenterID: int,
         RecipientID: int,
         VolunteerID: int,
-        amount_of_meals: int
+        amount_of_meals: int,
+        freshness_priority:int,
     ) -> DeliveryAssignment:
         assignment = DeliveryAssignment(
             DistributionCenterID=DistributionCenterID,
             RecipientID=RecipientID,
             VolunteerID=VolunteerID,
-            amount_of_meals=amount_of_meals
+            amount_of_meals=amount_of_meals,
+            freshness_priority=freshness_priority
         )
         self.db.add(assignment)
         self.db.commit()
@@ -35,7 +37,8 @@ class DeliveryAssignmentRepository:
         DistributionCenterID: int = None,
         RecipientID: int = None,
         VolunteerID: int = None,
-        amount_of_meals: int = None
+        amount_of_meals: int = None,
+        freshness_priority:int = None,
     ) -> DeliveryAssignment | None:
         assignment = self.get_delivery_assignment(assignmentID)
         if assignment:
@@ -47,6 +50,8 @@ class DeliveryAssignmentRepository:
                 assignment.VolunteerID = VolunteerID
             if amount_of_meals is not None:
                 assignment.amount_of_meals = amount_of_meals
+            if freshness_priority is not None:
+                assignment.freshness_priority = freshness_priority
             self.db.commit()
             self.db.refresh(assignment)
         return assignment

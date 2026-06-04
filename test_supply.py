@@ -1,51 +1,139 @@
-# -----------------------------
-# קוד בדיקה להרצת האלגוריתם המעודכן
-# -----------------------------
-from services.batch_algoritm.tranportation_algoritm import run_transportation_problem
+import os
 import csv
+
+from services.batch_algoritm.transportation_algoritm import (
+    run_transportation_problem
+)
+
 
 def test_transportation_algorithm(db):
     """
-    מריץ את האלגוריתם של שיבוץ נזקקים למוקדים,
-    מדפיס את התוצאה ל-console ויוצר קובץ CSV.
+    מריץ את האלגוריתם,
+    מדפיס תוצאות,
+    ותמיד יוצר CSV בתוך csvfiles.
     """
 
-    # קריאה לפונקציה הראשית של האלגוריתם
+    print("\n===================================")
+    print("Transportation Problem Test")
+    print("===================================\n")
+
+    # ---------------------------------
+    # Run algorithm
+    # ---------------------------------
+
     result = run_transportation_problem(db)
 
-    # בדיקה אם נמצא פתרון אופטימלי
-    if result["status"] != "Optimal":
-        print("לא נמצא פתרון אופטימלי. סטטוס:", result["status"])
-        return
+    status = result.get("status", "UNKNOWN")
 
-    allocation = result["allocation"]
+    print(f"Solver Status: {status}")
 
-    # הדפסת השיבוץ בקונסול
-    print("שיבוץ אופטימלי:")
-    for a in allocation:
-        print(
-            f"Recipient {a['recipient_id']} <- Center {a['center_id']}, "
-            f"Demand: {a['demand']}, Center Capacity: {a['capacity']}, Distance: {a['distance']:.2f} km"
-        )
+    allocation = result.get("allocation", [])
 
-    # כתיבת CSV
-    csv_filename = "allocation_test_updated.csv"
-    with open(csv_filename, mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=["center_id", "recipient_id", "demand", "capacity", "distance"]
-        )
-        writer.writeheader()
-        for a in allocation:
-            writer.writerow(a)
+    print(f"Assignments Found: {len(allocation)}")
 
-    print(f"CSV נוצר בהצלחה בשם: {csv_filename}")
+    # ---------------------------------
+    # Print allocation
+    # ---------------------------------
+
+    if allocation:
+
+        print("\nAssignments:\n")
+
+        for row in allocation:
+
+            print(
+                f"Center {row['center_id']} -> "
+                f"Recipient {row['recipient_id']} | "
+                f"Demand={row['demand']} | "
+                f"Capacity={row['capacity']} | "
+                f"Distance={row['distance']:.2f} km"
+            )
+
+    else:
+
+        print("\nNo allocation returned.\n")
+
+    # ---------------------------------
+    # Create csv folder
+    # ---------------------------------
+
+    os.makedirs("csvfiles", exist_ok=True)
+
+    csv_path = os.path.join(
+        "csvfiles",
+        "transportation_results2.csv"
+    )
+
+    # ---------------------------------
+    # Create CSV
+    # ---------------------------------
+
+    with open(
+        csv_path,
+        mode="w",
+        newline="",
+        encoding="utf-8"
+    ) as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "center_id",
+            "recipient_id",
+            "demand",
+            "capacity",
+            "distance_km"
+        ])
+
+        for row in allocation:
+
+            writer.writerow([
+                row.get("center_id"),
+                row.get("recipient_id"),
+                row.get("demand"),
+                row.get("capacity"),
+                row.get("distance")
+            ])
+
+    print(f"\nCSV created: {csv_path}")
+
+    # ---------------------------------
+    # Summary
+    # ---------------------------------
+
+    print("\nSummary:")
+    print(
+        "Assigned Recipients:",
+        result.get("assigned_count", len(allocation))
+    )
+
+    print(
+        "Unassigned Recipients:",
+        result.get("unassigned_count", 0)
+    )
+
+    if result.get("unassigned"):
+
+        print("\nUnassigned Recipient IDs:")
+
+        for recipient_id in result["unassigned"]:
+            print(recipient_id)
 
 
-# -----------------------------
-# דוגמה להרצה
-# -----------------------------
+# ---------------------------------
+# RUN TEST
+# ---------------------------------
+
 if __name__ == "__main__":
-    from db_connection import get_session  # הכנס את הפונקציה שלך ל־DB
-    db = get_session()                     # יצירת session מוכן
-    test_transportation_algorithm(db)
+
+    from db_connection import get_session
+
+    db = get_session()
+
+    try:
+
+        test_transportation_algorithm(db)
+
+    finally:
+
+        db.close()

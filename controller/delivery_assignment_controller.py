@@ -20,7 +20,8 @@ def add_delivery_assignment():
             DistributionCenterID=data['DistributionCenterID'],
             RecipientID=data['RecipientID'],
             VolunteerID=data['VolunteerID'],
-            amount_of_meals=data['amount_of_meals']
+            amount_of_meals=data['amount_of_meals'],
+            freshness_priority=data['freshness_priority']
         )
 
         dto = DeliveryAssignmentDTO(
@@ -28,7 +29,8 @@ def add_delivery_assignment():
             DistributionCenterID=new_assignment.DistributionCenterID,
             RecipientID=new_assignment.RecipientID,
             VolunteerID=new_assignment.VolunteerID,
-            amount_of_meals=new_assignment.amount_of_meals
+            amount_of_meals=new_assignment.amount_of_meals,
+            freshness_priority=data['freshness_priority']
         )
 
         return jsonify(dto.__dict__), 201
@@ -51,7 +53,8 @@ def get_delivery_assignment(assignment_id):
             DistributionCenterID=assignment.DistributionCenterID,
             RecipientID=assignment.RecipientID,
             VolunteerID=assignment.VolunteerID,
-            amount_of_meals=assignment.amount_of_meals
+            amount_of_meals=assignment.amount_of_meals,
+            freshness_priority=assignment.freshness_priority
         )
 
         return jsonify(dto.__dict__)
@@ -73,7 +76,8 @@ def get_all_delivery_assignments():
                 DistributionCenterID=a.DistributionCenterID,
                 RecipientID=a.RecipientID,
                 VolunteerID=a.VolunteerID,
-                amount_of_meals=a.amount_of_meals
+                amount_of_meals=a.amount_of_meals,
+                freshness_priority=a.freshness_priority
             ).__dict__ for a in assignments
         ]
 
@@ -95,7 +99,8 @@ def update_delivery_assignment(assignment_id):
             DistributionCenterID=data.get('DistributionCenterID'),
             RecipientID=data.get('RecipientID'),
             VolunteerID=data.get('VolunteerID'),
-            amount_of_meals=data.get('amount_of_meals')
+            amount_of_meals=data.get('amount_of_meals'),
+            freshness_priority=data.get('freshness_priority')
         )
 
         if not updated:
@@ -106,7 +111,8 @@ def update_delivery_assignment(assignment_id):
             DistributionCenterID=updated.DistributionCenterID,
             RecipientID=updated.RecipientID,
             VolunteerID=updated.VolunteerID,
-            amount_of_meals=updated.amount_of_meals
+            amount_of_meals=updated.amount_of_meals,
+            freshness_priority=updated.freshness_priority
         )
 
         return jsonify(dto.__dict__)
