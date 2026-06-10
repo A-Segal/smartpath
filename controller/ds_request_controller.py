@@ -18,19 +18,23 @@ def add_request():
 
         request_date = data.get('request_date')
         if request_date:
-            request_date = datetime.fromisoformat(request_date)  # convert ISO string to datetime
+            request_date = datetime.fromisoformat(request_date)
+
+        freshness_priority = data.get('freshness_priority', 0)  # ערך ברירת מחדל 0
 
         new_request = repo.create_request(
             distribution_center_id=data['DistributionCenterID'],
             amount_of_meals=data['amount_of_meals'],
-            request_date=request_date
+            request_date=request_date,
+            freshness_priority=freshness_priority
         )
 
         dto = DSRequestDTO(
             id=new_request.id,
             DistributionCenterID=new_request.DistributionCenterID,
             amount_of_meals=new_request.amount_of_meals,
-            request_date=new_request.request_date.isoformat()
+            request_date=new_request.request_date.isoformat(),
+            freshness_priority=new_request.freshness_priority
         )
         return jsonify(dto.__dict__), 201
     finally:
@@ -51,7 +55,8 @@ def get_request(request_id):
             id=req.id,
             DistributionCenterID=req.DistributionCenterID,
             amount_of_meals=req.amount_of_meals,
-            request_date=req.request_date.isoformat()
+            request_date=req.request_date.isoformat(),
+            freshness_priority=req.freshness_priority
         )
         return jsonify(dto.__dict__)
     finally:
@@ -71,12 +76,12 @@ def get_all_requests():
                 id=r.id,
                 DistributionCenterID=r.DistributionCenterID,
                 amount_of_meals=r.amount_of_meals,
-                request_date=r.request_date.isoformat()
+                request_date=r.request_date.isoformat(),
+                freshness_priority=r.freshness_priority
             ).__dict__ for r in all_requests
         ]
         return jsonify(dto_list)
     finally:
-
         db_session.close()
 
 
@@ -92,10 +97,13 @@ def update_request(request_id):
         if request_date:
             request_date = datetime.fromisoformat(request_date)
 
+        freshness_priority = data.get('freshness_priority', None)
+
         updated_request = repo.update_request(
             request_id,
             amount_of_meals=data.get('amount_of_meals'),
-            request_date=request_date
+            request_date=request_date,
+            freshness_priority=freshness_priority
         )
 
         if updated_request is None:
@@ -105,7 +113,8 @@ def update_request(request_id):
             id=updated_request.id,
             DistributionCenterID=updated_request.DistributionCenterID,
             amount_of_meals=updated_request.amount_of_meals,
-            request_date=updated_request.request_date.isoformat()
+            request_date=updated_request.request_date.isoformat(),
+            freshness_priority=updated_request.freshness_priority
         )
         return jsonify(dto.__dict__)
     finally:

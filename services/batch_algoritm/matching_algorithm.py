@@ -309,23 +309,13 @@ def build_second_phase_candidates(
         first_recipient = recipients_dict[first_recipient_id]
 
         for recipient_id in unassigned_recipients:
-            ###now delete
-            if recipient_id in [10, 12]:
-                print(f"\n===== CHECK RECIPIENT {recipient_id} =====")
-                print(f"center_id={center_id}")
-                print(f"remaining_meals={remaining_meals}")
-            ####
+
             recipient_request = recipient_requests_dict.get(recipient_id)
             if recipient_request is None:
                 continue
 
             recipient_meals = recipient_request.amount_of_meals
-            #####delete now
-            if recipient_id in [10, 12]:
-                print(f"recipient_meals={recipient_meals}")
-            if recipient_id in [10, 12] and recipient_meals > remaining_meals:
-                print("FAILED: recipient_meals > remaining_meals")
-            ######
+
 
 
 
@@ -341,11 +331,7 @@ def build_second_phase_candidates(
                 float(recipient.location_lng)
             )
 
-            ####delete now
-            if recipient_id in [10, 12]:
-                print(f"distance={distance}")
-                print(f"max_distance_km={max_distance_km}")
-            ######
+
 
             if distance > max_distance_km:
                 continue
@@ -355,10 +341,7 @@ def build_second_phase_candidates(
             meals_ratio = (remaining_meals - recipient_meals) / remaining_meals
 
             score = distance_ratio * 0.8 + meals_ratio * 0.2
-            #####delete now
-            if recipient_id in [10, 12]:
-                print("PASSED -> added to second_phase_candidates")
-            ######
+
             new_candidates_by_center[center_id].append(
                 (
                     recipient_id,

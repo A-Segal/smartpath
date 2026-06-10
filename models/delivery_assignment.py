@@ -6,6 +6,6 @@ class DeliveryAssignment(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     DistributionCenterID = Column(Integer, ForeignKey('DistributionCenter.id'), nullable=False)
     RecipientID = Column(Integer, ForeignKey('Recipient.id'), nullable=False)
-    VolunteerID = Column(Integer, ForeignKey('Volunteer.id'), nullable=False)
+    VolunteerID = Column(Integer, ForeignKey('Volunteer.id'), nullable=True)
     amount_of_meals = Column(Integer)
     freshness_priority = Column(Integer, nullable=False)

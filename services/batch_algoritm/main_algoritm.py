@@ -1,7 +1,6 @@
 from collections import deque
 from repository.recipient_request_repository import RecipientRequestRepository
-from repository.DS_request_Repository import DSRequestRepository  # <-- צריך את זה
-from repository.distribution_centerRepository import DistributionCenterRepository
+from repository.DS_request_Repository import DSRequestRepository
 from services.batch_algoritm.matching_algorithm import (
     build_candidates_for_centers,
     sort_center_candidates,
@@ -11,7 +10,10 @@ from services.batch_algoritm.matching_algorithm import (
 )
 
 def run_full_matching(db):
-    # ----- שלב 1: בניית מועמדים ושיבוץ ראשוני -----
+
+    # =========================
+    # שלב 1: מועמדים ושיבוץ ראשוני
+    # =========================
     candidates = build_candidates_for_centers(db)
     candidates = sort_center_candidates(candidates)
 
@@ -25,97 +27,122 @@ def run_full_matching(db):
     total_recipients = len(recipient_requests)
     recipient_requests_dict = {r.RecipientID: r for r in recipient_requests}
 
+    # חשוב: נביא את כל ה-DS requests פעם אחת
+    ds_request_repo = DSRequestRepository(db)
+    ds_requests = ds_request_repo.get_all_requests()
+    ds_requests_dict = {
+        r.DistributionCenterID: r
+        for r in ds_requests
+    }
+
     while queue and len(recipient_assignment) < total_recipients:
+
         center_id = queue.popleft()
         idx = current_index[center_id]
+
         if idx >= len(candidates[center_id]):
             continue
 
         recipient_id, score, recipient_meals, center_meals = candidates[center_id][idx]
 
         if recipient_id not in recipient_assignment:
+
+            freshness_priority = (
+                ds_requests_dict[center_id].freshness_priority
+                if center_id in ds_requests_dict
+                else 0
+            )
+
             recipient_assignment[recipient_id] = {
                 "center_id": center_id,
                 "score": score,
                 "recipient_meals": recipient_meals,
                 "center_meals": center_meals,
-                "order": step_counter
+                "order": step_counter,
+                "freshness_priority": freshness_priority
             }
+
             step_counter += 1
+
         else:
             current_assignment = recipient_assignment[recipient_id]
             old_center = current_assignment["center_id"]
             old_score = current_assignment["score"]
 
             if score < old_score:
+
+                freshness_priority = (
+                    ds_requests_dict[center_id].freshness_priority
+                    if center_id in ds_requests_dict
+                    else 0
+                )
+
                 recipient_assignment[recipient_id] = {
                     "center_id": center_id,
                     "score": score,
                     "recipient_meals": recipient_meals,
                     "center_meals": center_meals,
-                    "order": step_counter
+                    "order": step_counter,
+                    "freshness_priority": freshness_priority
                 }
+
                 step_counter += 1
                 current_index[old_center] += 1
                 queue.append(old_center)
+
             else:
                 current_index[center_id] += 1
                 queue.append(center_id)
 
-    # ----- שלב 2: חישוב שאריות ושיבוץ משני -----
-    # 1. דליית כל הבקשות של מרכזים (DS_Request) כדי לקבל amount_of_meals
-    ds_request_repo = DSRequestRepository(db)
-    ds_requests = ds_request_repo.get_all_requests()  # <-- כאן יש amount_of_meals
-    ds_requests_dict = {r.DistributionCenterID: r for r in ds_requests}
-
-    # 2. שימוש ב-build_center_usage
+    # =========================
+    # שלב 2: שיבוץ משני
+    # =========================
     center_usage = build_center_usage(recipient_assignment)
-
-    # 3. בניית מילון שאריות
     remaining_meals_by_center = build_remaining_meals_by_center(center_usage, ds_requests_dict)
 
-    # ----- הכנת רשימת הנמענים הלא משובצים -----
     all_recipients = set(recipient_requests_dict.keys())
     assigned_recipients = set(recipient_assignment.keys())
     unassigned_recipients = list(all_recipients - assigned_recipients)
 
-    # ----- בניית מועמדים לשלב שני -----
     second_phase_candidates = build_second_phase_candidates(
         db,
         center_usage,
         remaining_meals_by_center,
         unassigned_recipients
     )
-    #####delete now
-    print("\n========== SECOND PHASE CANDIDATES ==========")
 
-    for center_id, candidates in second_phase_candidates.items():
-        print(f"\nCENTER {center_id}")
-
-        for candidate in candidates:
-            print(candidate)
-    ######
     second_phase_candidates = sort_center_candidates(second_phase_candidates)
 
     queue = deque(second_phase_candidates.keys())
     current_index = {center_id: 0 for center_id in second_phase_candidates}
 
     while queue and unassigned_recipients:
+
         center_id = queue.popleft()
         idx = current_index[center_id]
+
         if idx >= len(second_phase_candidates[center_id]):
             continue
 
         recipient_id, score, recipient_meals, remaining_meals = second_phase_candidates[center_id][idx]
 
         if recipient_id not in recipient_assignment:
+
+            freshness_priority = (
+                ds_requests_dict[center_id].freshness_priority
+                if center_id in ds_requests_dict
+                else 0
+            )
+
             recipient_assignment[recipient_id] = {
                 "center_id": center_id,
                 "score": score,
                 "recipient_meals": recipient_meals,
-                "center_meals": remaining_meals,  # רק לצורך תיעוד
-                "order": step_counter
+                "center_meals": remaining_meals,
+                "order": step_counter,
+                "freshness_priority": freshness_priority
             }
+
             step_counter += 1
             unassigned_recipients.remove(recipient_id)
 

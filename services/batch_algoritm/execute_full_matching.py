@@ -12,7 +12,7 @@ def execute_full_matching():
         recipient_assignment = run_full_matching(db)
 
         # הדפסת תוצאות (debug בלבד)
-        print_matching_results(db, recipient_assignment)
+        # print_matching_results(db, recipient_assignment)
 
         # מחזירים רק את מה שהפונקציה באמת מחזירה
         return recipient_assignment

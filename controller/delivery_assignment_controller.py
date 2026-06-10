@@ -3,39 +3,54 @@ from repository.delivery_assignmentRepository import DeliveryAssignmentRepositor
 from db_connection import SessionLocal
 from dto.delivery_assignmentDTO import DeliveryAssignmentDTO  # נניח שיש קובץ DTO
 from typing import List
+from services.delivery_assignment_service import create_assignments_from_matching
+
+
 
 # Blueprint עבור DeliveryAssignment
 delivery_assignment_bp = Blueprint('delivery_assignment_bp', __name__, url_prefix='/delivery_assignment')
 
 
 # ==================== יצירת משלוח חדש (POST) ====================
-@delivery_assignment_bp.route('', methods=['POST'])
-def add_delivery_assignment():
-    db_session = SessionLocal()
+# @delivery_assignment_bp.route('', methods=['POST'])
+# def add_delivery_assignment():
+#     db_session = SessionLocal()
+#     try:
+#         repo = DeliveryAssignmentRepository(db_session)
+#         data = request.get_json()
+#
+#         new_assignment = repo.create_delivery_assignment(
+#             DistributionCenterID=data['DistributionCenterID'],
+#             RecipientID=data['RecipientID'],
+#             VolunteerID=data['VolunteerID'],
+#             amount_of_meals=data['amount_of_meals'],
+#             freshness_priority=data['freshness_priority']
+#         )
+#
+#         dto = DeliveryAssignmentDTO(
+#             id=new_assignment.id,
+#             DistributionCenterID=new_assignment.DistributionCenterID,
+#             RecipientID=new_assignment.RecipientID,
+#             VolunteerID=new_assignment.VolunteerID,
+#             amount_of_meals=new_assignment.amount_of_meals,
+#             freshness_priority=data['freshness_priority']
+#         )
+#
+#         return jsonify(dto.__dict__), 201
+#     finally:
+#         db_session.close()
+@delivery_assignment_bp.route('/run_matching', methods=['POST'])
+def run_matching_and_create_assignments():
+    """
+    מפעיל את אלגוריתם השיבוץ ומכניס את ההקצאות לטבלת DeliveryAssignment
+    """
     try:
-        repo = DeliveryAssignmentRepository(db_session)
-        data = request.get_json()
-
-        new_assignment = repo.create_delivery_assignment(
-            DistributionCenterID=data['DistributionCenterID'],
-            RecipientID=data['RecipientID'],
-            VolunteerID=data['VolunteerID'],
-            amount_of_meals=data['amount_of_meals'],
-            freshness_priority=data['freshness_priority']
-        )
-
-        dto = DeliveryAssignmentDTO(
-            id=new_assignment.id,
-            DistributionCenterID=new_assignment.DistributionCenterID,
-            RecipientID=new_assignment.RecipientID,
-            VolunteerID=new_assignment.VolunteerID,
-            amount_of_meals=new_assignment.amount_of_meals,
-            freshness_priority=data['freshness_priority']
-        )
-
-        return jsonify(dto.__dict__), 201
-    finally:
-        db_session.close()
+        created_count = create_assignments_from_matching()
+        return jsonify({
+            "message": f"{created_count} assignments created successfully"
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ==================== קבלת משלוח לפי ID (GET) ====================
