@@ -1,7 +1,7 @@
 from datetime import date
 
 from db_connection import get_session
-from services.batch_algoritm.main_algoritm import run_full_matching
+from tests.main_algo2 import run_full_matching
 from repository.recipient_request_repository import RecipientRequestRepository
 from repository.DS_request_Repository import DSRequestRepository
 from repository.distribution_centerRepository import DistributionCenterRepository
