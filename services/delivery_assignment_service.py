@@ -22,7 +22,7 @@ def create_assignments_from_matching():
                 RecipientID=recipient_id,
                 VolunteerID=None,
                 amount_of_meals=assignment["recipient_meals"],
-                freshness_priority=assignment.get("freshness_priority", 0)
+                type=assignment.get("type", 0)
 
             )
 

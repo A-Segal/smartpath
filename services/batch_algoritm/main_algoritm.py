@@ -47,8 +47,8 @@ def run_full_matching(db):
 
         if recipient_id not in recipient_assignment:
 
-            freshness_priority = (
-                ds_requests_dict[center_id].freshness_priority
+            type = (
+                ds_requests_dict[center_id].type
                 if center_id in ds_requests_dict
                 else 0
             )
@@ -59,7 +59,7 @@ def run_full_matching(db):
                 "recipient_meals": recipient_meals,
                 "center_meals": center_meals,
                 "order": step_counter,
-                "freshness_priority": freshness_priority
+                "type": type
             }
 
             step_counter += 1
@@ -71,8 +71,8 @@ def run_full_matching(db):
 
             if score < old_score:
 
-                freshness_priority = (
-                    ds_requests_dict[center_id].freshness_priority
+                type = (
+                    ds_requests_dict[center_id].type
                     if center_id in ds_requests_dict
                     else 0
                 )
@@ -83,7 +83,7 @@ def run_full_matching(db):
                     "recipient_meals": recipient_meals,
                     "center_meals": center_meals,
                     "order": step_counter,
-                    "freshness_priority": freshness_priority
+                    "type": type
                 }
 
                 step_counter += 1
@@ -128,8 +128,8 @@ def run_full_matching(db):
 
         if recipient_id not in recipient_assignment:
 
-            freshness_priority = (
-                ds_requests_dict[center_id].freshness_priority
+            type = (
+                ds_requests_dict[center_id].type
                 if center_id in ds_requests_dict
                 else 0
             )
@@ -140,7 +140,7 @@ def run_full_matching(db):
                 "recipient_meals": recipient_meals,
                 "center_meals": remaining_meals,
                 "order": step_counter,
-                "freshness_priority": freshness_priority
+                "type": type
             }
 
             step_counter += 1
