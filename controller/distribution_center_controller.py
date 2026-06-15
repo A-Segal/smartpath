@@ -24,8 +24,8 @@ def add_distribution_center():
             phone=data['phone'],
             location_lat=data['location_lat'],
             location_lng=data['location_lng'],
-            meal_count=data.get('meal_count', 0),
-            request=data.get('request')
+            meal_count=data.get('meal_count', 0)
+
         )
 
         dto = DistributionCenterDTO(
@@ -36,8 +36,7 @@ def add_distribution_center():
             mail=new_center.mail,
             phone=new_center.phone,
             location_lat=new_center.location_lat,
-            location_lng=new_center.location_lng,
-            request=new_center.request
+            location_lng=new_center.location_lng
         )
 
         return jsonify(dto.__dict__), 201
@@ -62,8 +61,7 @@ def get_distribution_center(center_id):
             mail=center.mail,
             phone=center.phone,
             location_lat=center.location_lat,
-            location_lng=center.location_lng,
-            request=center.request
+            location_lng=center.location_lng
         )
 
         return jsonify(dto.__dict__)
@@ -93,8 +91,7 @@ def get_distribution_center_by_password():
             mail=center.mail,
             phone=center.phone,
             location_lat=center.location_lat,
-            location_lng=center.location_lng,
-            request=center.request
+            location_lng=center.location_lng
         )
 
         return jsonify(dto.__dict__)
@@ -117,8 +114,7 @@ def get_all_distribution_centers():
                 mail=c.mail,
                 phone=c.phone,
                 location_lat=c.location_lat,
-                location_lng=c.location_lng,
-                request=c.request
+                location_lng=c.location_lng
             ).__dict__ for c in centers
         ]
 
@@ -143,8 +139,7 @@ def update_distribution_center(center_id):
             mail=data.get('mail'),
             phone=data.get('phone'),
             location_lat=data.get('location_lat'),
-            location_lng=data.get('location_lng'),
-            request=data.get('request')
+            location_lng=data.get('location_lng')
         )
 
         if not updated:
@@ -158,8 +153,7 @@ def update_distribution_center(center_id):
             mail=updated.mail,
             phone=updated.phone,
             location_lat=updated.location_lat,
-            location_lng=updated.location_lng,
-            request=updated.request
+            location_lng=updated.location_lng
         )
 
         return jsonify(dto.__dict__)

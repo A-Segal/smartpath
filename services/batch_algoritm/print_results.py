@@ -1,6 +1,6 @@
 # services/batch_algoritm/print_matching.py
 
-from services.googleMaps import distance_between_points
+from services.utils.googleMaps import distance_between_points
 from repository.distribution_centerRepository import DistributionCenterRepository
 from repository.recipientRepository import RecipientRepository
 from repository.recipient_request_repository import RecipientRequestRepository

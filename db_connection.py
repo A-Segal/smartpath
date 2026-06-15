@@ -12,7 +12,7 @@ from models.staff_member import StaffMember
 from models.vehicle import Vehicle
 from models.permission import Permission
 from models.vehicle import Vehicle
-
+from models.volunteer import Volunteer
 SERVER = 'localhost'
 DATABASE = 'deliveryDB'
 DRIVER = 'ODBC Driver 17 for SQL Server'

@@ -2,7 +2,7 @@ from repository.distribution_centerRepository import DistributionCenterRepositor
 from repository.recipientRepository import RecipientRepository
 from repository.DS_request_Repository import DSRequestRepository
 from repository.recipient_request_repository import RecipientRequestRepository
-from services.googleMaps import distance_between_points
+from services.utils.googleMaps import distance_between_points
 
 
 

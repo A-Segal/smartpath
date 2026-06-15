@@ -10,6 +10,7 @@ from controller.vehicle_controller import vehicle_bp
 from controller.staff_member_controller import staff_bp
 from controller.delivery_assignment_controller import delivery_assignment_bp
 from controller.distribution_center_controller import distribution_center_bp
+from controller.volunteer_request_controller import volunteer_request_bp
 app = Flask(__name__)
 
 CORS(app)
@@ -22,7 +23,7 @@ app.register_blueprint(vehicle_bp)
 app.register_blueprint(staff_bp)
 app.register_blueprint(delivery_assignment_bp)
 app.register_blueprint(distribution_center_bp)
-
+app.register_blueprint(volunteer_request_bp)
 @app.route('/')
 def home():
     return "Server is running!"

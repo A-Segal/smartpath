@@ -1,5 +1,5 @@
 class DistributionCenterDTO:
-    def __init__(self,id,fname,lname,username,phone,mail,  location_lat,location_lng, request):
+    def __init__(self,id,fname,lname,username,phone,mail,  location_lat,location_lng):
         self.id = id
         self.fname = fname
         self.lname = lname
@@ -8,4 +8,3 @@ class DistributionCenterDTO:
         self.phone = phone
         self.location_lat = location_lat
         self.location_lng = location_lng
-        self.request = request

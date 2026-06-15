@@ -12,5 +12,4 @@ class DistributionCenter(Base):
     phone = Column(String(20), nullable=False)
     location_lat = Column(DECIMAL(10, 7), nullable=False)
     location_lng = Column(DECIMAL(10, 7), nullable=False)
-    request = Column(String(255))
 

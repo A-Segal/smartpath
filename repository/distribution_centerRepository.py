@@ -15,8 +15,7 @@ class DistributionCenterRepository:
         phone: str,
         location_lat: float,
         location_lng: float,
-        meal_count: int,
-        request: str = None
+        meal_count: int
     ) -> DistributionCenter:
         center = DistributionCenter(
             fname=fname,
@@ -26,8 +25,7 @@ class DistributionCenterRepository:
             mail=mail,
             phone=phone,
             location_lat=location_lat,
-            location_lng=location_lng,
-            request=request
+            location_lng=location_lng
         )
         self.db.add(center)
         self.db.commit()
@@ -52,8 +50,7 @@ class DistributionCenterRepository:
         mail: str = None,
         phone: str = None,
         location_lat: float = None,
-        location_lng: float = None,
-        request: str = None
+        location_lng: float = None
     ) -> DistributionCenter | None:
         center = self.get_distribution_center(centerID)
         if center:
@@ -74,8 +71,7 @@ class DistributionCenterRepository:
             if location_lng is not None:
                 center.location_lng = location_lng
 
-            if request is not None:
-                center.request = request
+
             self.db.commit()
             self.db.refresh(center)
         return center
